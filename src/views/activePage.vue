@@ -15,9 +15,11 @@ const initPageInfo = {
     title: '麦邻生活',
     introduction: '麦邻生活',
     thumbnail: '',
-    linkUrl: ''
+    linkUrl: location.href
   }
 }
+
+let userAgent = navigator.userAgent
 
 export default {
   name: 'activePage',
@@ -30,19 +32,24 @@ export default {
     }
   },
   created () {
-    let userAgent = navigator.userAgent
     let getUserDataFromLoacal = getUserData() || {}
     // APP内
     if (getUserDataFromLoacal.v && getUserDataFromLoacal.platform) {
       // 未登录
       if (!getUserDataFromLoacal.sessionId) {
+         // 未登录调用登录方法
+        let bridgeParam = {
+          libCode: 5001,
+          refresh: true
+        }
         if (userAgent.includes('fht-android')) {
-          // eslint-disable-next-line
-          MLActivityLogin.callAppLogin()
-        } else {
-          Bridge.callHandler('loginAction', {}, function responseCallback (responseData) {
-            window.location.href = './index.html'
+          window.SetupJsCommunication.jumpToNativePages(JSON.stringify(bridgeParam))
+        } else if (userAgent.includes('fht-ios')) {
+          Bridge.callHandler('jumpToNativePages', bridgeParam, function responseCallback (responseData) {
+            window.location.href = window.location.href
           })
+        } else {
+          console.log('H5')
         }
       }
     // APP外
@@ -60,11 +67,30 @@ export default {
   },
   methods: {
     /**
+     * 获取APP数据
+     */
+    getAppData () {
+      if (userAgent.includes('fht-ios')) {
+        Bridge.callHandler('getParamsFromNative', {}, function responseCallback (responseData) {
+          console.log(responseData)
+        })
+      } else if (userAgent.includes('fht-android')) {
+        // eslint-disable-next-line
+        let getAndriodData = JSON.parse(window.SetupJsCommunication.getParamsFromNative())
+        console.log(getAndriodData)
+      } else {
+        // h5
+      }
+    },
+    /**
      * 注册IOS/Andriod方法，获取页面信息
      */
     initApp () {
-      Bridge.registerhandler('initPageInfo', (data, responseCallback) => {
+      Bridge.registerHandler('initPageInfo', (data, responseCallback) => {
         responseCallback(initPageInfo)
+      })
+      Bridge.registerHandler('refreshPage', (data, responseCallback) => {
+        window.location.href = window.location.href
       })
       if (navigator.userAgent.includes('fht-android')) {
         // eslint-disable-next-line

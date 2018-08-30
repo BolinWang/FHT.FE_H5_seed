@@ -2,12 +2,12 @@
  * @Author: FT.FE.Bolin
  * @Date: 2018-08-17 16:00:08
  * @Last Modified by: FT.FE.Bolin
- * @Last Modified time: 2018-08-17 16:49:52
+ * @Last Modified time: 2018-08-30 10:02:48
  */
 
 import store from 'store'
 
-const userDataKey = 'MLSH-active10'
+const userDataKey = 'FHT.FE-H5'
 
 export function getUserData () {
   return store.get(userDataKey)

@@ -15,12 +15,12 @@ function setupWebViewJavascriptBridge (callback) {
   }, 0)
 }
 export default {
-  callhandler (name, data, callback) {
+  callHandler (name, data, callback) {
     setupWebViewJavascriptBridge((bridge) => {
       bridge.callHandler(name, data, callback)
     })
   },
-  registerhandler (name, callback) {
+  registerHandler (name, callback) {
     setupWebViewJavascriptBridge((bridge) => {
       bridge.registerHandler(name, function (data, responseCallback) {
         callback(data, responseCallback)

@@ -82,13 +82,13 @@ export default {
     },
     getVcode () {
       if (!this.mobile) {
-        this.$toast('fail', '请输入手机号')
+        this.$toast.fail('请输入手机号')
         return false
       }
       loginApi.getVcode({
         mobile: this.mobile
       }).then(response => {
-        this.$toast('success', '验证码已发送')
+        this.$toast.success('验证码已发送')
         this.disabled = true
         let timetimer = setInterval(() => {
           this.timerNum--
