@@ -19,7 +19,7 @@ const initPageInfo = {
   }
 }
 
-let userAgent = navigator.userAgent
+let userAgent = navigator.userAgent.toLocaleLowerCase()
 
 export default {
   name: 'activePage',
@@ -28,23 +28,31 @@ export default {
   },
   data () {
     return {
-
+      app_ios: false, // ios
+      app_andriod: false, // andriod
+      isAPP: false, // 是否APP内
+      userInfo: {} // 存储用户信息
     }
   },
   created () {
+    // 字符串查找不用includes  IOS8不兼容
+    this.app_ios = userAgent.indexOf('fht-ios') > -1
+    this.app_andriod = userAgent.indexOf('fht-android') > -1
+
     let getUserDataFromLoacal = getUserData() || {}
+    this.isAPP = getUserDataFromLoacal.v && getUserDataFromLoacal.platform
     // APP内
-    if (getUserDataFromLoacal.v && getUserDataFromLoacal.platform) {
+    if (this.isAPP) {
       // 未登录
       if (!getUserDataFromLoacal.sessionId) {
-         // 未登录调用登录方法
+        // 未登录调用登录方法
         let bridgeParam = {
           libCode: 5001,
           refresh: true
         }
-        if (userAgent.includes('fht-android')) {
+        if (this.app_andriod === true) {
           window.SetupJsCommunication.jumpToNativePages(JSON.stringify(bridgeParam))
-        } else if (userAgent.includes('fht-ios')) {
+        } else if (this.app_ios === true) {
           Bridge.callHandler('jumpToNativePages', bridgeParam, function responseCallback (responseData) {
             window.location.href = window.location.href
           })
@@ -70,11 +78,11 @@ export default {
      * 获取APP数据
      */
     getAppData () {
-      if (userAgent.includes('fht-ios')) {
+      if (this.app_ios === true) {
         Bridge.callHandler('getParamsFromNative', {}, function responseCallback (responseData) {
           console.log(responseData)
         })
-      } else if (userAgent.includes('fht-android')) {
+      } else if (this.app_andriod === true) {
         // eslint-disable-next-line
         let getAndriodData = JSON.parse(window.SetupJsCommunication.getParamsFromNative())
         console.log(getAndriodData)
@@ -86,15 +94,16 @@ export default {
      * 注册IOS/Andriod方法，获取页面信息
      */
     initApp () {
-      Bridge.registerHandler('initPageInfo', (data, responseCallback) => {
-        responseCallback(initPageInfo)
-      })
-      Bridge.registerHandler('refreshPage', (data, responseCallback) => {
-        window.location.href = window.location.href
-      })
-      if (navigator.userAgent.includes('fht-android')) {
+      if (this.app_ios === true) {
+        Bridge.registerHandler('initPageInfo', (data, responseCallback) => {
+          responseCallback(initPageInfo)
+        })
+        Bridge.registerHandler('refreshPage', (data, responseCallback) => {
+          window.location.href = window.location.href
+        })
+      } else if (this.app_andriod === true) {
         // eslint-disable-next-line
-        SetupJsCommunication.initPageInfo(
+        window.SetupJsCommunication.initPageInfo(
           JSON.stringify(initPageInfo)
         )
       }

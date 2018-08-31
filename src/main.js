@@ -2,7 +2,7 @@
  * @Author: FT.FE.Bolin
  * @Date: 2018-08-17 14:44:52
  * @Last Modified by: FT.FE.Bolin
- * @Last Modified time: 2018-08-30 10:10:46
+ * @Last Modified time: 2018-08-31 10:28:05
  */
 
 import Vue from 'vue'
@@ -12,8 +12,6 @@ import 'lib-flexible/flexible'
 import 'normalize.css/normalize.css'
 import FastClick from 'fastclick'
 import { Toast } from 'vant'
-import { setUserData, getUserData } from '@/utils/auth'
-import Bridge from '@/utils/bridge'
 // development引用vconsole
 // eslint-disable-next-line
 process.env.NODE_ENV !== 'production' && require('@/utils/vconsole').default

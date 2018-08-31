@@ -69,6 +69,14 @@ export default {
   },
   methods: {
     login () {
+      if (!this.mobile) {
+        this.$toast.fail('请输入手机号')
+        return false
+      }
+      if (!this.vcode) {
+        this.$toast.fail('请输入验证码')
+        return false
+      }
       loginApi.login({
         mobile: this.mobile,
         vcode: this.vcode
