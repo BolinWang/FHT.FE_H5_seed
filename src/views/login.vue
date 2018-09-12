@@ -24,20 +24,9 @@
 </template>
 
 <script>
-import { getWxShareInfo } from '@/utils/wxshare'
 import { setUserData } from '@/utils/auth'
 import { Field, Cell, CellGroup, Button } from 'vant'
 import { loginApi } from '@/api/login'
-
-const initPageInfo = {
-  title: '麦邻租房',
-  shareData: {
-    title: '麦邻生活',
-    introduction: '麦邻生活',
-    thumbnail: '',
-    linkUrl: ''
-  }
-}
 
 export default {
   name: 'login',
@@ -56,16 +45,10 @@ export default {
     }
   },
   created () {
-    // TODO development模拟登录态
-    // let testLogin = 'Jqes+f0ERc9NPU0h/LeqchUsEcEtwzNz2cvjbNeViB0KBu++5d…wBqHjALBSLwmdxsjuZj9BVePv02GsseNEtEm290FS0DOeVA8='
-    // setUserData({
-    //   sessionId: testLogin
-    // })
+
   },
   mounted () {
-    this.$nextTick(function () {
-      getWxShareInfo(initPageInfo.shareData)
-    })
+
   },
   methods: {
     login () {
@@ -85,7 +68,7 @@ export default {
         setUserData({
           sessionId: response.sessionId
         })
-        this.$router.push('/activePage')
+        this.$emit('handleEmit')
       }).catch()
     },
     getVcode () {
@@ -115,7 +98,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>

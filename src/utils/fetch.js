@@ -2,7 +2,7 @@
  * @Author: FT.FE.Bolin
  * @Date: 2018-08-17 14:52:44
  * @Last Modified by: FT.FE.Bolin
- * @Last Modified time: 2018-08-17 16:51:51
+ * @Last Modified time: 2018-09-12 10:27:48
  */
 
 import axios from 'axios'
@@ -19,7 +19,7 @@ const defaultConfig = {
 
 /* 创建axios实例 */
 const service = axios.create({
-  baseURL: process.env.BASE_API,
+  baseURL: process.env.ML_API,
   interceptors: true, // 是否开启response拦截器 默认true
   noAssign: false // 请求体是否带defaultConfig 默认false
   // timeout: 5000 // 请求超时时间
