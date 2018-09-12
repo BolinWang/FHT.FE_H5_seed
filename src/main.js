@@ -2,11 +2,10 @@
  * @Author: FT.FE.Bolin
  * @Date: 2018-08-17 14:44:52
  * @Last Modified by: FT.FE.Bolin
- * @Last Modified time: 2018-08-31 10:28:05
+ * @Last Modified time: 2018-09-12 10:57:15
  */
 
 import Vue from 'vue'
-import router from './router'
 import App from './App'
 import 'lib-flexible/flexible'
 import 'normalize.css/normalize.css'
@@ -21,33 +20,9 @@ Vue.config.productionTip = false
 
 const vm = new Vue({
   el: '#app-box',
-  router,
   components: { App },
   template: '<App/>'
 })
 Vue.use(vm)
 
 Vue.prototype.$toast = Toast
-
-router.beforeEach((to, from, next) => {
-
-})
-
-/**
- * 百度统计
- */
-router.afterEach((to, from, next) => {
-  setTimeout(() => {
-    // eslint-disable-next-line
-    let _hmt = _hmt || [];
-    (function () {
-      document.getElementById('fht_baidu_tj') &&
-        document.getElementById('fht_baidu_tj').remove()
-      let hm = document.createElement('script')
-      hm.src = ''
-      hm.id = 'fht_baidu_tj'
-      let s = document.getElementsByTagName('script')[0]
-      s.parentNode.insertBefore(hm, s)
-    })()
-  }, 0)
-})
