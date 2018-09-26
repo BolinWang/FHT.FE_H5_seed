@@ -63,7 +63,7 @@ export default {
     this.initPage()
   },
   mounted () {
-    this.$nextTick(function () {
+    this.$nextTick(() => {
       getWxShareInfo(initPageInfo.shareData)
     })
   },

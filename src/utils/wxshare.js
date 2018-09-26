@@ -15,7 +15,8 @@ const getWxShareInfo = (shareData = {
   fetch('https://www.mdguanjia.com/myhome/act/august/wechat.htm', {
     url: location.href.split('#')[0],
     callback: 'h5'
-  }, 'get', {
+  }, {
+    method: 'get',
     noAssign: true,
     interceptors: false
   }).then((data) => {
@@ -23,21 +24,36 @@ const getWxShareInfo = (shareData = {
       return false
     }
     const response = data.dataObject
+    const jsApiList = [
+      'updateAppMessageShareData',
+      'updateTimelineShareData',
+      'onMenuShareTimeline',
+      'onMenuShareAppMessage'
+    ]
     wx.config({
       debug: false,
       appId: response.appid,
       timestamp: response.timestamp,
       nonceStr: response.noncestr,
       signature: response.signature,
-      jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+      jsApiList
     })
-    wx.ready(function () {
+    wx.ready(() => {
+      wx.checkJsApi({
+        jsApiList,
+        success (res) {
+          console.log(res)
+          // 以键值对的形式返回，可用的api值true，不可用为false
+          // 如：{"checkResult":{"chooseImage":true},"errMsg":"checkJsApi:ok"}
+        }
+      })
+      // 1.4版本后废弃
       wx.onMenuShareTimeline({
         title: shareData.title, // 分享标题
         link: shareData.linkUrl, // 分享链接
         imgUrl: shareData.thumbnail, // 分享图标
-        success: function () {},
-        cancel: function () {}
+        success () {},
+        cancel () {}
       })
       wx.onMenuShareAppMessage({
         title: shareData.title, // 分享标题
@@ -46,11 +62,29 @@ const getWxShareInfo = (shareData = {
         imgUrl: shareData.thumbnail, // 分享图标
         type: '', // 分享类型,music、video或link，不填默认为link
         dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
-        success: function () {},
-        cancel: function () {}
+        success () {},
+        cancel () {}
       })
+
+      // 1.4版本新增
+      // // 分享好友（微信&QQ）
+      // wx.updateAppMessageShareData({
+      //   title: shareData.title,
+      //   link: shareData.linkUrl,
+      //   imgUrl: shareData.thumbnail,
+      //   desc: shareData.introduction
+      // }, (res) => {
+      //   console.log(res)
+      // })
+      // wx.updateTimelineShareData({
+      //   title: shareData.title,
+      //   link: shareData.linkUrl,
+      //   imgUrl: shareData.thumbnail
+      // }, (res) => {
+      //   console.log(res)
+      // })
     })
-    wx.error(function (res) {
+    wx.error((res) => {
       console.debug(res)
     })
   })
