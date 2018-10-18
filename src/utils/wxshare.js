@@ -1,5 +1,6 @@
 import wx from 'weixin-js-sdk'
 import { fetch } from '@/utils/fetch'
+import { getWxVersion } from '@/utils/browser'
 
 /**
  * 微信分享
@@ -7,23 +8,29 @@ import { fetch } from '@/utils/fetch'
  * @default: shareData{}
  */
 
-const getWxShareInfo = (shareData = {
-  title: '麦邻租房',
-  introduction: '麦邻租房',
-  thumbnail: 'https://www.mdguanjia.com/images/wx_share__ml.png'
-}) => {
-  fetch('https://www.mdguanjia.com/myhome/act/august/wechat.htm', {
-    url: location.href.split('#')[0],
-    callback: 'h5'
-  }, {
-    method: 'get',
-    noAssign: true,
-    interceptors: false
-  }).then((data) => {
-    if (!data.success) {
-      return false
-    }
-    const response = data.dataObject
+const wechatShareCase = {
+  shareData: {
+    title: '麦邻租房',
+    introduction: '麦邻租房',
+    thumbnail: '//www.mdguanjia.com/images/wx_share__ml.png'
+  },
+  getAuthInfo (shareData) {
+    fetch('//www.mdguanjia.com/myhome/act/august/wechat.htm', {
+      url: location.href.split('#')[0],
+      callback: 'h5'
+    }, {
+      method: 'get',
+      noAssign: true,
+      interceptors: false
+    }).then((data) => {
+      if (!data.success) {
+        return false
+      }
+      this.shareData = shareData
+      this.wechatSetting(data.dataObject)
+    })
+  },
+  wechatSetting (response) {
     const jsApiList = [
       'updateAppMessageShareData',
       'updateTimelineShareData',
@@ -31,7 +38,7 @@ const getWxShareInfo = (shareData = {
       'onMenuShareAppMessage'
     ]
     wx.config({
-      debug: false,
+      debug: true,
       appId: response.appid,
       timestamp: response.timestamp,
       nonceStr: response.noncestr,
@@ -39,55 +46,85 @@ const getWxShareInfo = (shareData = {
       jsApiList
     })
     wx.ready(() => {
-      wx.checkJsApi({
-        jsApiList,
-        success (res) {
-          console.log(res)
-          // 以键值对的形式返回，可用的api值true，不可用为false
-          // 如：{"checkResult":{"chooseImage":true},"errMsg":"checkJsApi:ok"}
-        }
+      let supportApi = []
+      let _this = this
+      const wechatVersion = getWxVersion()
+      // 客户端6.0.2之后支持
+      if (wechatVersion > '6.0.2') {
+        wx.checkJsApi({
+          jsApiList,
+          complete (res) {
+            if (res.errMsg.indexOf('ok')) {
+              const checkApiObj = res.checkResult || {}
+              supportApi = Object.keys(checkApiObj).filter(item => {
+                return checkApiObj[item] === true
+              })
+            } else {
+              supportApi = ['onMenuShareTimeline', 'onMenuShareAppMessage']
+            }
+            _this.initWxMethods(supportApi)
+          }
+        })
+      }
+    })
+    wx.error((res) => {
+      console.debug(res)
+    })
+  },
+  initWxMethods (supportApi) {
+    let _this = this
+    if (supportApi.find(item => item === 'updateAppMessageShareData')) {
+      wx.updateAppMessageShareData({
+        title: _this.shareData.title,
+        link: _this.shareData.linkUrl,
+        imgUrl: _this.shareData.thumbnail,
+        desc: _this.shareData.introduction
+      }, (res) => {
+        console.log(res)
       })
-      // 1.4版本后废弃
+    }
+    if (supportApi.find(item => item === 'updateTimelineShareData')) {
+      wx.updateTimelineShareData({
+        title: _this.shareData.title,
+        link: _this.shareData.linkUrl,
+        imgUrl: _this.shareData.thumbnail
+      }, (res) => {
+        console.log(res)
+      })
+    }
+    // } else {
+    if (supportApi.find(item => item === 'onMenuShareTimeline')) {
+      console.log('onMenuShareTimeline')
       wx.onMenuShareTimeline({
-        title: shareData.title, // 分享标题
-        link: shareData.linkUrl, // 分享链接
-        imgUrl: shareData.thumbnail, // 分享图标
+        title: _this.shareData.title, // 分享标题
+        link: _this.shareData.linkUrl, // 分享链接
+        imgUrl: _this.shareData.thumbnail, // 分享图标
         success () {},
         cancel () {}
       })
+    }
+    if (supportApi.find(item => item === 'onMenuShareAppMessage')) {
+      console.log('onMenuShareAppMessage')
       wx.onMenuShareAppMessage({
-        title: shareData.title, // 分享标题
-        desc: shareData.introduction, // 分享描述
-        link: shareData.linkUrl, // 分享链接
-        imgUrl: shareData.thumbnail, // 分享图标
+        title: this.shareData.title, // 分享标题
+        desc: this.shareData.introduction, // 分享描述
+        link: this.shareData.linkUrl, // 分享链接
+        imgUrl: this.shareData.thumbnail, // 分享图标
         type: '', // 分享类型,music、video或link，不填默认为link
         dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
         success () {},
         cancel () {}
       })
+    }
+  }
+}
 
-      // 1.4版本新增
-      // // 分享好友（微信&QQ）
-      // wx.updateAppMessageShareData({
-      //   title: shareData.title,
-      //   link: shareData.linkUrl,
-      //   imgUrl: shareData.thumbnail,
-      //   desc: shareData.introduction
-      // }, (res) => {
-      //   console.log(res)
-      // })
-      // wx.updateTimelineShareData({
-      //   title: shareData.title,
-      //   link: shareData.linkUrl,
-      //   imgUrl: shareData.thumbnail
-      // }, (res) => {
-      //   console.log(res)
-      // })
-    })
-    wx.error((res) => {
-      console.debug(res)
-    })
-  })
+const getWxShareInfo = (shareData = {
+  title: '麦邻租房',
+  introduction: '麦邻租房',
+  thumbnail: '//www.mdguanjia.com/images/wx_share__ml.png'
+}) => {
+  wechatShareCase.getAuthInfo(shareData)
 }
 
 export { getWxShareInfo }

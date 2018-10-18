@@ -11,7 +11,7 @@
 import activePage from '@/views/activePage'
 import login from '@/views/login'
 import { getWxShareInfo } from '@/utils/wxshare'
-import { getBrowser } from '@/utils//browser'
+import { getBrowser } from '@/utils/browser'
 import { setUserData, getUserData } from '@/utils/auth'
 import Bridge from '@/utils/bridge'
 
@@ -23,8 +23,8 @@ console.log(browser)
 const initPageInfo = {
   title: '麦邻租房',
   shareData: {
-    title: '麦邻生活',
-    introduction: '麦邻生活',
+    title: '麦邻租房',
+    introduction: '麦邻租房',
     thumbnail: '',
     linkUrl: location.href
   }

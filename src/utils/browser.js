@@ -7,6 +7,14 @@ export function getIOSVersion () {
 }
 
 /**
+ * 获取 微信 版本号
+ */
+export function getWxVersion () {
+  const verion = navigator.userAgent.match(/micromessenger\/([\d.]+)/i)
+  return verion ? verion[1] : null
+}
+
+/**
  * 获取 browser 信息
  */
 export function getBrowser () {
