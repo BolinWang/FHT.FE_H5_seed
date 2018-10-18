@@ -1,6 +1,6 @@
 # appupdate
 
-> a page for mailin update
+> a template for H5 pages
 
 ## Build Setup
 
