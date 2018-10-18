@@ -6,6 +6,8 @@ import { getWxVersion } from '@/utils/browser'
  * 微信分享
  * @function: getWxShareInfo()
  * @default: shareData{}
+ * @callback 分享成功[callbackOk]
+ * @callback 分享失败[callbackFail]
  */
 
 const wechatShareCase = {
@@ -14,7 +16,9 @@ const wechatShareCase = {
     introduction: '麦邻租房',
     thumbnail: '//www.mdguanjia.com/images/wx_share__ml.png'
   },
-  getAuthInfo (shareData) {
+  callbackOk () {},
+  callbackFail () {},
+  getAuthInfo () {
     fetch('//www.mdguanjia.com/myhome/act/august/wechat.htm', {
       url: location.href.split('#')[0],
       callback: 'h5'
@@ -26,10 +30,10 @@ const wechatShareCase = {
       if (!data.success) {
         return false
       }
-      this.shareData = shareData
       this.wechatSetting(data.dataObject)
     })
   },
+  // 微信基础Api
   wechatSetting (response) {
     const jsApiList = [
       'updateAppMessageShareData',
@@ -63,6 +67,7 @@ const wechatShareCase = {
               supportApi = ['onMenuShareTimeline', 'onMenuShareAppMessage']
             }
             _this.initWxMethods(supportApi)
+            _this.callbackOk()
           }
         })
       }
@@ -71,6 +76,7 @@ const wechatShareCase = {
       console.debug(res)
     })
   },
+  // 微信分享注册
   initWxMethods (supportApi) {
     let _this = this
     if (supportApi.find(item => item === 'updateAppMessageShareData')) {
@@ -92,7 +98,6 @@ const wechatShareCase = {
         console.log(res)
       })
     }
-    // } else {
     if (supportApi.find(item => item === 'onMenuShareTimeline')) {
       console.log('onMenuShareTimeline')
       wx.onMenuShareTimeline({
@@ -119,12 +124,19 @@ const wechatShareCase = {
   }
 }
 
-const getWxShareInfo = (shareData = {
-  title: '麦邻租房',
-  introduction: '麦邻租房',
-  thumbnail: '//www.mdguanjia.com/images/wx_share__ml.png'
-}) => {
-  wechatShareCase.getAuthInfo(shareData)
+const getWxShareInfo = (
+  shareData = {
+    title: '麦邻租房',
+    introduction: '麦邻租房',
+    thumbnail: '//www.mdguanjia.com/images/wx_share__ml.png'
+  },
+  callbackOk = () => { console.log('分享成功') },
+  callbackFail = () => { console.log('分享失败') }
+) => {
+  wechatShareCase.shareData = shareData
+  wechatShareCase.callbackOk = callbackOk
+  wechatShareCase.callbackFail = callbackFail
+  wechatShareCase.getAuthInfo()
 }
 
 export { getWxShareInfo }
