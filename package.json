@@ -11,8 +11,8 @@
     "build:sit": "cross-env NODE_ENV=production env_config=sit node build/build.js",
     "build:pre": "cross-env NODE_ENV=production env_config=pre node build/build.js",
     "build:prod": "cross-env NODE_ENV=production env_config=prod node build/build.js",
-    "lint": "eslint --ext .js,.vue src",
-    "test": "npm run lint"
+    "lint": "eslint --ext .js,.vue src --fix",
+    "test": "eslint --ext .js,.vue src"
   },
   "dependencies": {
     "axios": "0.17.1",
@@ -53,6 +53,9 @@
     "file-loader": "^1.1.4",
     "friendly-errors-webpack-plugin": "^1.6.1",
     "html-webpack-plugin": "^2.30.1",
+    "husky": "^1.1.1",
+    "lint-staged": "^7.3.0",
+    "mockjs": "^1.0.1-beta3",
     "node-notifier": "^5.1.2",
     "optimize-css-assets-webpack-plugin": "^3.2.0",
     "ora": "^1.2.0",
@@ -88,5 +91,19 @@
     "last 5 Firefox versions",
     "Safari >= 6",
     "ie > 8"
-  ]
+  ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "linters": {
+      "src/**/*.{js,vue}": [
+        "eslint --fix",
+        "git add"
+      ]
+    },
+    "ignore": []
+  }
 }
