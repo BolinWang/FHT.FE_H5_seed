@@ -2,7 +2,7 @@
  * @Author: FT.FE.Bolin
  * @Date: 2018-08-17 14:52:44
  * @Last Modified by: FT.FE.Bolin
- * @Last Modified time: 2018-09-18 11:35:32
+ * @Last Modified time: 2018-10-18 14:24:24
  */
 
 import axios from 'axios'
@@ -42,6 +42,14 @@ service.interceptors.request.use(config => {
     if (!config.noAssign) {
       config.params = Object.assign(config.params, defaultConfig)
     }
+  }
+  /**
+   * 处理mock
+   * [process.env.MOCK] config/配置
+   * [config.isMock] 请求参数配置
+   */
+  if (process.env.MOCK && config.isMock) {
+    config.url = `${config.url}/${config.data.method || 'isMock'}`
   }
   return config
 }, error => {
