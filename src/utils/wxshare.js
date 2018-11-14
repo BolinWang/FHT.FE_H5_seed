@@ -22,8 +22,7 @@ const wechatShareCase = {
     fetch('//www.mdguanjia.com/myhome/act/august/wechat.htm', {
       url: location.href.split('#')[0],
       callback: 'h5'
-    }, {
-      method: 'get',
+    }, 'get', {
       noAssign: true,
       interceptors: false
     }).then((data) => {
@@ -42,7 +41,7 @@ const wechatShareCase = {
       'onMenuShareAppMessage'
     ]
     wx.config({
-      debug: true,
+      debug: false,
       appId: response.appid,
       timestamp: response.timestamp,
       nonceStr: response.noncestr,
@@ -58,14 +57,13 @@ const wechatShareCase = {
         wx.checkJsApi({
           jsApiList,
           complete (res) {
-            if (res.errMsg.indexOf('ok')) {
-              const checkApiObj = res.checkResult || {}
-              supportApi = Object.keys(checkApiObj).filter(item => {
-                return checkApiObj[item] === true
-              })
-            } else {
-              supportApi = ['onMenuShareTimeline', 'onMenuShareAppMessage']
-            }
+            // if (res.errMsg.indexOf('ok')) {
+            //   const checkApiObj = JSON.parse(res.checkResult || '{}')
+            //   supportApi = Object.keys(checkApiObj)
+            // } else {
+            //   supportApi = ['onMenuShareTimeline', 'onMenuShareAppMessage']
+            // }
+            supportApi = ['onMenuShareTimeline', 'onMenuShareAppMessage']
             _this.initWxMethods(supportApi)
             _this.callbackOk()
           }
@@ -80,6 +78,7 @@ const wechatShareCase = {
   initWxMethods (supportApi) {
     let _this = this
     if (supportApi.find(item => item === 'updateAppMessageShareData')) {
+      console.log('updateAppMessageShareData')
       wx.updateAppMessageShareData({
         title: _this.shareData.title,
         link: _this.shareData.linkUrl,
@@ -90,6 +89,7 @@ const wechatShareCase = {
       })
     }
     if (supportApi.find(item => item === 'updateTimelineShareData')) {
+      console.log('updateTimelineShareData')
       wx.updateTimelineShareData({
         title: _this.shareData.title,
         link: _this.shareData.linkUrl,
@@ -110,6 +110,7 @@ const wechatShareCase = {
     }
     if (supportApi.find(item => item === 'onMenuShareAppMessage')) {
       console.log('onMenuShareAppMessage')
+      console.log(_this.shareData)
       wx.onMenuShareAppMessage({
         title: this.shareData.title, // 分享标题
         desc: this.shareData.introduction, // 分享描述
@@ -128,7 +129,7 @@ const getWxShareInfo = (
   shareData = {
     title: '麦邻租房',
     introduction: '麦邻租房',
-    thumbnail: '//www.mdguanjia.com/images/wx_share__ml.png'
+    thumbnail: 'https://www.mdguanjia.com/images/wx_share__ml.png'
   },
   callbackOk = () => { console.log('分享成功') },
   callbackFail = () => { console.log('分享失败') }
