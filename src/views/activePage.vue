@@ -223,6 +223,8 @@ export default {
       font-size:0;
       line-height:0;
       border-radius:50%;
+      box-shadow: -3px 0 1px #ccbfce;
+
     }
     li::before{
       left:15px;
