@@ -86,7 +86,7 @@ const responseMehod = (response, resolve, reject) => {
   if (res.code * 1 === 1011 && res.message === '数据不存在') {
     logOutMethod()
   }
-  Toast.fail(res.message || '未知错误，请联系管理员')
+  // Toast.fail(res.message || '未知错误，请联系管理员')
   // sessionId 失效
   if (res.code * 1 === 1016) {
     Toast.fail(`${res.message}，请重新登录`)

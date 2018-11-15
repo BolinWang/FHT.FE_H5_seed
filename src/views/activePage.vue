@@ -1,6 +1,14 @@
 <template>
   <div class="page_container">
-    活动
+      <div class="list">
+        <ul>
+          <li>
+              <a href="">
+                <img src="" alt="" width="">
+              </a>
+          </li>
+        </ul>
+      </div>
   </div>
 </template>
 
@@ -43,6 +51,15 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
+  .list{
+    li{
+      width: 662px;
+      height: 490px;
+      background: #fff;
+      border-radius: 6px;
+      box-shadow: 1px -1px -1px #000
+    }
+  }
 
 </style>

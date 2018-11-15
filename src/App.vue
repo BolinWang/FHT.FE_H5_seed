@@ -1,18 +1,14 @@
 <template>
   <div id="app">
-    <activePage v-if="active === 1" :params="urlSearchParams"></activePage>
-    <login v-else-if="active === 2"
-      @handleEmit="handleLogin">
-    </login>
+    <activePage></activePage>
   </div>
 </template>
 
 <script>
 import activePage from '@/views/activePage'
-import login from '@/views/login'
 import { getWxShareInfo } from '@/utils/wxshare'
 import { getBrowser } from '@/utils/browser'
-import { setUserData, getUserData } from '@/utils/auth'
+import { setUserData } from '@/utils/auth'
 import Bridge from '@/utils/bridge'
 
 // 获取客户端类型
@@ -34,32 +30,17 @@ const userAgent = navigator.userAgent.toLocaleLowerCase()
 export default {
   name: 'app',
   components: {
-    activePage,
-    login
+    activePage
   },
   data () {
     return {
       active: 0, // 0：无， 1：activePage  2: login
-      urlSearchParams: {}, // search 数据
       app_ios: false, // ios
       app_andriod: false, // andriod
       isAPP: false // 是否APP内
     }
   },
   created () {
-    // 获取search数据
-    let urlSearchParams = {}
-    if (location.search.indexOf('?') !== -1) {
-      const searchArr = location.search.substr(1).split('&')
-      for (let i = 0; i < searchArr.length; i++) {
-        if (searchArr[i].split('=')[1]) {
-          urlSearchParams[searchArr[i].split('=')[0]] = unescape(
-            searchArr[i].split('=')[1]
-          )
-        }
-      }
-    }
-    this.urlSearchParams = urlSearchParams
     this.initPage()
   },
   mounted () {
@@ -80,49 +61,18 @@ export default {
       if (this.app_ios === true) {
         Bridge.callHandler('getParamsFromNative', {}, function responseCallback (responseData) {
           setUserData(responseData)
-          _this.initActive()
           _this.initApp()
         })
       } else if (this.app_andriod === true) {
-        // eslint-disable-next-line
+        // eslint-disyouable-next-line
         let getAndriodData = JSON.parse(window.SetupJsCommunication.getParamsFromNative())
         setUserData(getAndriodData)
-        this.initActive()
         this.initApp()
       } else {
-        this.initActive()
         this.initApp()
       }
       this.initApp()
     },
-    /**
-     * 判断登录状态
-     */
-    initActive () {
-      let getUserDataFromLoacal = getUserData() || {}
-      // 未登录
-      if (!getUserDataFromLoacal.sessionId) {
-        // TODO something you need of outlogin
-        this.active = 2
-        let bridgeParam = {
-          libCode: 5001,
-          refresh: true
-        }
-        if (this.app_andriod === true) {
-          window.SetupJsCommunication.jumpToNativePages(JSON.stringify(bridgeParam))
-        } else if (this.app_ios === true) {
-          Bridge.callHandler('jumpToNativePages', bridgeParam, function responseCallback (responseData) {
-            window.location.href = window.location.href
-          })
-        } else {
-          console.log('H5')
-        }
-      } else {
-        // TODO something you need of login
-        this.active = 1
-      }
-    },
-
     /**
      * 注册IOS/Andriod方法，获取页面信息
      */
@@ -143,10 +93,6 @@ export default {
           window.location.href = window.location.href
         }
       }
-    },
-    // emit
-    handleLogin () {
-      this.active = 1
     }
   }
 }
