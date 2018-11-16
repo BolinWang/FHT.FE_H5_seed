@@ -19,8 +19,8 @@ console.log(browser)
 const initPageInfo = {
   title: '麦邻租房',
   shareData: {
-    title: '麦邻租房',
-    introduction: '麦邻租房',
+    title: '麦家公寓减房租了',
+    introduction: '最高立减1000元房租！',
     thumbnail: '',
     linkUrl: location.href
   }
