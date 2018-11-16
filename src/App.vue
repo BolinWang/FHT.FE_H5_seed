@@ -21,7 +21,7 @@ const initPageInfo = {
   shareData: {
     title: '麦家公寓减房租了',
     introduction: '最高立减1000元房租！',
-    thumbnail: '',
+    thumbnail: './assets/shareImg.jpg',
     linkUrl: location.href
   }
 }
