@@ -1,4 +1,4 @@
-function setupWebViewJavascriptBridge (callback) {
+const setupWebViewJavascriptBridge = callback => {
   if (window.WebViewJavascriptBridge) {
     return callback(window.WebViewJavascriptBridge)
   }
