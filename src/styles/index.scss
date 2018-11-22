@@ -13,9 +13,15 @@ html,
 body,
 #app {
   height: 100%;
-  width: 750px;
+  width: 100%;
   overflow-x: hidden;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 auto;
+}
+
+#app {
+  width: 10rem;
 }
 
 *,
