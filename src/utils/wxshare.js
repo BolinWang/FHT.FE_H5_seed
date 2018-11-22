@@ -58,14 +58,13 @@ const wechatShareCase = {
         wx.checkJsApi({
           jsApiList,
           complete (res) {
-            if (res.errMsg.indexOf('ok')) {
-              const checkApiObj = res.checkResult || {}
-              supportApi = Object.keys(checkApiObj).filter(item => {
-                return checkApiObj[item] === true
-              })
-            } else {
-              supportApi = ['onMenuShareTimeline', 'onMenuShareAppMessage']
-            }
+            // if (res.errMsg.indexOf('ok')) {
+            //   const checkApiObj = JSON.parse(res.checkResult || '{}')
+            //   supportApi = Object.keys(checkApiObj)
+            // } else {
+            //   supportApi = ['onMenuShareTimeline', 'onMenuShareAppMessage']
+            // }
+            supportApi = ['onMenuShareTimeline', 'onMenuShareAppMessage']
             _this.initWxMethods(supportApi)
             _this.callbackOk()
           }
